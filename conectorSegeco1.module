@@ -1,0 +1,154 @@
+<?php
+
+require_once 'include/conectorSegeco1_allowed_functions.inc';
+require_once 'include/conectorSegeco1_funcionesDeApoyo.inc';
+require_once 'include/conectorSegeco1_accionesAlCrearUnaSolicitud.inc';
+require_once 'include/conectorSegeco1_bulkSincronizarVial.inc';
+
+/**
+ * Funcion para configurar los menus
+ */
+function conectorSegeco1_menu() {
+    $items = array();
+    $items['conectorSegeco1/pagina-de-pruebas'] = array(
+        'title' => 'Code Server Test (and example use)',
+        'page callback' => 'conectorSegeco1_pruebas',
+        'access callback' => 'user_access',
+        'access arguments' => array('access content'),
+        'type' => MENU_CALLBACK,
+    );    
+    $items['admin/config/services/web_server_config'] = array(
+        'title'             => t('Web servers'),
+        'description'       => t('Configure web servers'),
+        'page callback'     => 'conectorSegeco1_web_servers_admin',
+        'access arguments'  => array('access content'),
+        'file'              => 'admin/conectorSegeco1_web_servers.inc'
+    );
+    $items['admin/config/services/web_server_config/html'] = array(
+        'title' => t('web servers'),
+        'weight' => 1,
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+    );
+    $items['admin/config/services/web_server_config/new'] = array(
+        'title' => t('New web server'),
+        'description' => t('Crear un nuevo servidor'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('conectorSegeco1_new_server_admin'),
+        'access arguments'  => array('access content'),
+        'weight' => 2,
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'admin/conectorSegeco1_new_server.inc',
+    );
+    $items['admin/config/services/web_server_config/delete'] = array(
+        'title' => t('Drop a web server'),
+        'description' => t('Eliminar un servidor de la configuración'),
+        'page callback' => 'drupal_get_form',
+        'page arguments' => array('conectorSegeco1_drop_server_admin'),
+        'access arguments'  => array('access content'),
+        'weight' => 3,
+        'type' => MENU_LOCAL_TASK,
+        'file' => 'admin/conectorSegeco1_drop_server.inc',
+    );
+    //Hay que crear tantos servidores como tenga el cliente
+    $codeserver_configs = variable_get('codeserver_configs');
+    $contador = 4;
+    foreach ($codeserver_configs as $nombreServidor => $configuraciones) {
+        $items['admin/config/services/web_server_config/' . $nombreServidor] = array(
+            'title'             => t('Configurar ' . $nombreServidor),
+            'description'       => t('Configuración del cliente ' . $nombreServidor),
+            'page callback'     => 'drupal_get_form',
+            'page arguments'    => array('conectorSegeco1_server_config_admin', $nombreServidor), 
+            'access arguments'  => array('access content'),
+            'weight'            => $contador,
+            'type'              => MENU_LOCAL_TASK,
+            'file'              => 'admin/conectorSegeco1_server_config.inc'
+        );
+        $contador++;
+    }
+    return $items;
+}
+
+//Funcion para imprimir variables
+function conectorSegeco1_pruebas() {
+//    print_r(libraries_get_path('PDFMerger'));
+    crearPDF(1551);
+    
+    
+    
+//    $v = Node_load(1678);
+////    print_r(date('d-m-Y h:i', $v->created));
+//    
+//    
+//    conectorSegeco1_node_insert($v);
+    
+    
+    
+//    $queue = DrupalQueue::get('BBIVialLleno');
+//    $item = $queue->claimItem();
+////    print_r($queue);
+//    var_dump($item);
+//    die();
+//    //si hay elementos los devolvemos.
+//    if($cantidad ) {
+//        $item = $queue->claimItem();
+//        print_r($item);
+//        die();
+//        $queue->deleteItem($item);
+//    }
+    
+//    $node = node_load(1549);
+//    //Ahora cogemos los datos..
+//    $vial['titulo']            = isset($node->field_solicitud_codigovial['und'][0]['target_id']) ? conectorSegeco1_getNodeById($node->field_solicitud_codigovial['und'][0]['target_id']) : NULL;
+//    $vial['fechaVialLleno']    = $node->created;  
+//    $vial['tituloSolicitud']   = $node->title;  
+//    $vial['tipoChapa']         = isset($node->field_perro_tipo_de_chapa['und'][0]['value']) ? $node->field_perro_tipo_de_chapa['und'][0]['value'] : NULL;    
+//    $vial['nombrePerro']       = isset($node->field_perro_nombre_ejemplar['und'][0]['value']) ? $node->field_perro_nombre_ejemplar['und'][0]['value'] : NULL;    
+//    $vial['digitoControl']     = isset($node->field_perro_digito_de_control['und'][0]['value']) ? $node->field_perro_digito_de_control['und'][0]['value'] : NULL;   
+//          
+//    
+//    
+//    
+//    $queue = DrupalQueue::get('BBIVialLleno');
+//    $queue->createItem($vial);
+    
+    
+    
+    
+//    print_r(BBIQueue::getItems('BBIVialLleno'));
+////    
+//    $node = node_load(1549);
+//    //Ahora cogemos los datos..
+//    $vial['titulo']            = isset($node->field_solicitud_codigovial['und'][0]['target_id']) ? conectorSegeco1_getNodeById($node->field_solicitud_codigovial['und'][0]['target_id']) : NULL;
+//    $vial['fechaVialLleno']    = $node->created;  
+//    $vial['tituloSolicitud']   = $node->title;  
+//    $vial['tipoChapa']         = isset($node->field_perro_tipo_de_chapa['und'][0]['value']) ? $node->field_perro_tipo_de_chapa['und'][0]['value'] : NULL;    
+//    $vial['nombrePerro']       = isset($node->field_perro_nombre_ejemplar['und'][0]['value']) ? $node->field_perro_nombre_ejemplar['und'][0]['value'] : NULL;    
+//    $vial['digitoControl']     = isset($node->field_perro_digito_de_control['und'][0]['value']) ? $node->field_perro_digito_de_control['und'][0]['value'] : NULL;   
+//          
+//    //Creamos la queue
+//    $queue = new BBIQueue('BBIVialLleno', $vial);          
+//    //Ahora guardamos...
+//    $queue->setToDB();
+    
+//    
+    
+    
+    
+    
+//    $viales = array();
+//    $query = db_select('node', 'n');    
+//    $query->join('field_data_field_vial_solicitud', 'fvs', 'n.nid = fvs.entity_id');
+//    $result = $query
+//            ->fields('n', array('nid'))
+//            ->execute();    
+//    if($result) {        
+//        while($record = $result->fetchAssoc()) {
+//            //print_r($record);
+//            $v = node_load($record['nid']);
+//            $v->field_vial_sincronizado['und'][0]['value'] = 0;
+//            node_save($v);
+//        }
+//    }
+    
+//    print_r(conectorSegeco_getVialesLlenos());
+}
